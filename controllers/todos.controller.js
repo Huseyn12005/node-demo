@@ -1,4 +1,5 @@
 import { Todo } from "../models/todo.model.js";
+import { getTokenContents } from "../utils/getTokenContents";
 
 export const getAllTodos = async (req, res) => {
     try {
@@ -8,6 +9,20 @@ export const getAllTodos = async (req, res) => {
         res.status(500).json({ message: "Error fetching todos", error });
     }
 }
+
+export const getTodosByUser = async (req, res) => {
+    try {
+      const { accessToken } = req.cookies;
+      const { id, email } = getTokenContents(res, accessToken);
+  
+      const todos = await Todo.find({ author: id }).populate("author", "name surname email");
+  
+      res.status(200).json(todos);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
 
 export const getTodoById = async (req, res) => {
     try {
@@ -24,10 +39,13 @@ export const getTodoById = async (req, res) => {
 
 export const createTodo = async (req, res) => {
     const { title, description } = req.body;
+    const { accessToken } = req.cookies;
+    const { id, email } = getTokenContents(res, accessToken);
   
     const todo = new Todo({
       title,
-      description
+      description,
+      author: id,
     });
   
     try {

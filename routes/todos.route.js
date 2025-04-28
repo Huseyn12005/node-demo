@@ -1,6 +1,8 @@
 import express from 'express';
+import { protectRoute } from '../middleware/protectRoute.js';
 import { 
-  getAllTodos, 
+  getAllTodos,
+  getTodosByUser, 
   getTodoById, 
   createTodo, 
   updateTodo, 
@@ -14,6 +16,9 @@ router.get('/', getAllTodos);
 
 // GET by ID method - Get todo by ID
 router.get('/todo/:id', getTodoById);
+
+router.get('/user', protectRoute, getTodosByUser);
+
 
 // POST method - Create a new todo
 router.post('/add', createTodo);
