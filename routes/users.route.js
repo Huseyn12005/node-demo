@@ -1,27 +1,38 @@
 import express from 'express';
-import { 
-  getAllTodos, 
-  getTodoById, 
-  createTodo, 
-  updateTodo, 
-  deleteTodo 
-} from '../controllers/todos.controller.js';
+import { protectRoute } from '../middleware/protectRoute.js';
+import {
+    getMyUserData,
+    createUser,
+    updateUser,
+    patchUser,
+    deleteUser
+} from '../controllers/users.controller.js';
 
 const router = express.Router();
 
-// GET method - Get all todos
-router.get('/', getAllTodos);
+// GET method
+router.get('/', (req, res) => {
+    res.json({ message: 'User data'});
+});
 
-// GET by ID method - Get todo by ID
-router.get('/user/:id', getTodoById);
+// GET method
+router.get('/user/:id', (req, res) => {
+    const { id } = req.params;
+    res.json({ message: `GET request to fetch User data by: ${id}` });
+});
 
-// POST method - Create a new todo
-router.post('/add', createTodo);
+router.get('/me', protectRoute, getMyUserData);
 
-// PUT method - Update an existing todo
-router.put('/edit/:id', updateTodo);
+// POST - Create user
+router.post('/add', createUser);
 
-// DELETE method - Delete a todo
-router.delete('/delete/:id', deleteTodo);
+// PUT - Update user
+router.put('/edit/:id', updateUser);
+
+// PATCH - Patch user
+router.patch('/patch/:id', patchUser);
+
+// DELETE - Delete user
+router.delete('/delete/:id', protectRoute, deleteUser);
 
 export default router;
